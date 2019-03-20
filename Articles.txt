@@ -1,0 +1,245 @@
+Design a table structure for following conditions:
+
+A user can write many articles. Each written article will fall under one category. Remember that many articles can be written under same category.
+
+The users can be of two types viz. admin or normal. A user can post multiple comments on an article.
+
+Now write queries for:
+
+1.manage(create, update, delete) categories, articles, comments, and users
+
+mysql> Create Database Blogs;
+Query OK, 1 row affected (0.00 sec)
+
+mysql> Use Blogs;
+Database changed
+mysql> Create table Users(ID smallint not null Primary key,
+    -> User_Name varchar(60) not null,
+    -> User_Type char(40) not null)
+    -> engine=INNODB;
+Query OK, 0 rows affected (0.19 sec)
+
+mysql> Insert into Users values(1, 'USER1', 'ADMIN'),
+    -> (2, 'USER2', 'ADMIN'),
+    -> (3, 'USER3', 'NORMAL'),
+    -> (4, 'USER4', 'ADMIN'),
+    -> (5, 'USER5', 'NORMAL');
+Query OK, 5 rows affected (0.03 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM Users;
++----+-----------+-----------+
+| ID | User_Name | User_Type |
++----+-----------+-----------+
+|  1 | USER1     | ADMIN     |
+|  2 | USER2     | ADMIN     |
+|  3 | USER3     | NORMAL    |
+|  4 | USER4     | ADMIN     |
+|  5 | USER5     | NORMAL    |
++----+-----------+-----------+
+5 rows in set (0.00 sec)
+
+mysql> Create table Catergories(ID smallint not null Primary key,
+    -> Catergory varchar(60) not null)
+    -> engine=INNODB;
+Query OK, 0 rows affected (0.08 sec)
+
+mysql> Insert into Catergories values(1, 'Global'),
+    -> (2, 'Local'),
+    -> (3, 'Travel'),
+    -> (4, 'Social'),
+    -> (5, 'Political');
+Query OK, 5 rows affected (0.11 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM Catergories;
++----+-----------+
+| ID | Catergory |
++----+-----------+
+|  1 | Global    |
+|  2 | Local     |
+|  3 | Travel    |
+|  4 | Social    |
+|  5 | Political |
++----+-----------+
+5 rows in set (0.00 sec)
+
+
+mysql> Create table Articles(ID smallint not null Primary Key,
+    -> Description varchar(60) not null,
+    -> User_id smallint not null,
+    -> Catergory_id smallint not null,
+    -> Foreign Key (User_id) references Users(ID),
+    -> Foreign Key (Catergory_id) references Catergories(ID))
+    -> engine=INNODB;
+Query OK, 0 rows affected (0.20 sec)
+
+mysql> Insert into Articles values(1,'Article1',1,1),
+    -> (2,'Article2',2,2),
+    -> (3,'Article3',4,3),
+    -> (4,'Article4',4,5),
+    -> (5,'Article5',3,4),
+    -> (6,'Article5',4,4),
+    -> (7,'Article7',3,3),
+    -> (8,'Article8',1,4),
+    -> (9,'Article9',5,2),
+    -> (10,'Article10',5,4);
+Query OK, 10 rows affected (0.11 sec)
+Records: 10  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM Articles;
++----+-------------+---------+--------------+
+| ID | Description | User_id | Catergory_id |
++----+-------------+---------+--------------+
+|  1 | Article1    |       1 |            1 |
+|  2 | Article2    |       2 |            2 |
+|  3 | Article3    |       4 |            3 |
+|  4 | Article4    |       4 |            5 |
+|  5 | Article5    |       3 |            4 |
+|  6 | Article5    |       4 |            4 |
+|  7 | Article7    |       3 |            3 |
+|  8 | Article8    |       1 |            4 |
+|  9 | Article9    |       5 |            2 |
+| 10 | Article10   |       5 |            4 |
++----+-------------+---------+--------------+
+10 rows in set (0.00 sec)
+
+mysql> Create Table Comments(Id smallint not null Primary Key,
+    -> Comment varchar(60) not null,
+    -> User_id smallint not null,
+    -> Article_id smallint not null,
+    -> Foreign Key (User_id) references Users(ID),
+    -> Foreign Key (Article_id) references Articles(ID))
+    -> engine=INNODB;
+Query OK, 0 rows affected (0.22 sec)
+
+mysql> Insert into Comments values(1,'Good',2,3),
+    -> (2,'Very Good',1,2),
+    -> (3,'Nice',4,10),
+    -> (4,'BAD',3,9),
+    -> (5,'Very BAD',5,6),
+    -> (6,'Awesome',3,10),
+    -> (7,'Amazing',2,5),
+    -> (8,'Pathetic',1,5),
+    -> (9,'Depraved',3,5),
+    -> (10,'Amiable',4,5),
+    -> (11,'Good to read',1,1),
+    -> (12,'Not Acceptable',2,4),
+    -> (13,'Fantastic',1,7),
+    -> (14,'NOT APT',1,8),
+    -> (15,'Acceptable',3,6);
+Query OK, 15 rows affected (0.03 sec)
+Records: 15  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM Comments;
++----+----------------+---------+------------+
+| Id | Comment        | User_id | Article_id |
++----+----------------+---------+------------+
+|  1 | Good           |       2 |          3 |
+|  2 | Very Good      |       1 |          2 |
+|  3 | Nice           |       4 |         10 |
+|  4 | BAD            |       3 |          9 |
+|  5 | Very BAD       |       5 |          6 |
+|  6 | Awesome        |       3 |         10 |
+|  7 | Amazing        |       2 |          5 |
+|  8 | Pathetic       |       1 |          5 |
+|  9 | Depraved       |       3 |          5 |
+| 10 | Amiable        |       4 |          5 |
+| 11 | Good to read   |       1 |          1 |
+| 12 | Not Acceptable |       2 |          4 |
+| 13 | Fantastic      |       1 |          7 |
+| 14 | NOT APT        |       1 |          8 |
+| 15 | Acceptable     |       3 |          6 |
++----+----------------+---------+------------+
+15 rows in set (0.00 sec)
+
+2.select all articles whose author's name is user3 (Do this exercise using variable also).
+mysql> select Description from Articles join Users
+    -> where Articles.user_id=Users.ID and User_name='User3';
++-------------+
+| Description |
++-------------+
+| Article5    |
+| Article7    |
++-------------+
+2 rows in set (0.00 sec)
+
+mysql> select @descr:=Description from Articles join Users
+    -> where Articles.user_id=Users.ID and User_name='User3';
++---------------------+
+| @descr:=Description |
++---------------------+
+| Article5            |
+| Article7            |
++---------------------+
+2 rows in set (0.09 sec)
+
+3.For all the articles being selected above, select all the articles and also the comments associated with those articles in a single query.
+mysql> select Description, Comment from Users inner join Articles on Users.id=Articles.User_id
+    -> inner join Comments on Comments.article_id=Articles.id
+    -> where user_name='USER3';
++-------------+-----------+
+| Description | Comment   |
++-------------+-----------+
+| Article5    | Amazing   |
+| Article5    | Pathetic  |
+| Article5    | Depraved  |
+| Article5    | Amiable   |
+| Article7    | Fantastic |
++-------------+-----------+
+5 rows in set (0.00 sec)
+
+Using Subquery
+mysql> select Description , Comment from Articles inner join Comments on Articles.id=Comments.article_id
+    -> where Articles.user_id=(select ID from Users where User_name='USER3');
++-------------+-----------+
+| description | comment   |
++-------------+-----------+
+| Article5    | Amazing   |
+| Article5    | Pathetic  |
+| Article5    | Depraved  |
+| Article5    | Amiable   |
+| Article7    | Fantastic |
++-------------+-----------+
+5 rows in set (0.11 sec)
+
+
+4.Write a query to select all articles which do not have any comments (Do using subquery also)
+mysql> select Articles.id as Article_No from Articles, Comments
+    -> where Articles.id=Comments.Article_id
+    -> group by Articles.id
+    -> having count(Description)=0;
+Empty set (0.00 sec)
+
+mysql> select description from articles where id IN 
+    ->(select articles.id from articles,comments where articles.id=comments.id having count(description)=0);
+Empty set (0.02 sec)
+
+.5.Write a query to select article which has maximum comments
+mysql> select Articles.id as Article_No, count(Description) as No_of_Comments from Articles, Comments
+    -> where Articles.id=Comments.Article_id
+    -> group by Articles.id
+    -> order by No_of_Comments desc
+    -> limit 1;
++------------+----------------+
+| Article_No | No_of_Comments |
++------------+----------------+
+|          5 |              4 |
++------------+----------------+
+1 row in set (0.00 sec)
+6.Write a query to select article which does not have more than one comment by the same user ( do this using left join and group by )
+mysql> select Description from Articles left join Comments on Articles.id=Comments.Article_id
+    -> where Comments.User_id!=Articles.User_id
+    -> group by Description;
++-------------+
+| Description |
++-------------+
+| Article10   |
+| Article2    |
+| Article3    |
+| Article4    |
+| Article5    |
+| Article7    |
+| Article9    |
++-------------+
+7 rows in set (0.00 sec)
